@@ -22,6 +22,9 @@ public class Main extends JPanel {
     private static final int MS_TO_WAIT = 1000 / FRAMES_PER_SECOND;
     private Ball ball;
     private static final int INITIAL_Y_VELOCITY = 10;
+
+    private static final double ACCELERATION = 1.1;
+
     private Timer animationTimer;
 
     public Main() {
@@ -33,20 +36,26 @@ public class Main extends JPanel {
             @Override
             public void run() {
 
-                
 
-                ball.setyVelocity((int) (ball.getyVelocity() * 1.1));
+                // a = (v2-v1)/t
+                // a*t = (v2-v1)
+                // (a*t)+v1 = v2
+
+                double v2 = (ACCELERATION * 1) + ball.getyVelocity();
+
+
+                ball.setyVelocity(v2);
                 ball.update();
 
 
                 // If it falls off the stage, reset it to the top of the screen
                 if (ball.getY() > getHeight()) {
                     ball.setY(getHeight());
-                    ball.setyVelocity((int) (-.9 * ball.getyVelocity()));
+                    ball.setyVelocity((-.9 * ball.getyVelocity()));
                 }
                 else if (ball.getY() < 0) {
                     ball.setY(0);
-                    ball.setyVelocity((int) (-.9 * ball.getyVelocity()));
+                    ball.setyVelocity((-.9 * ball.getyVelocity()));
                 }
 
                 repaint();
@@ -69,7 +78,7 @@ public class Main extends JPanel {
         super.paintComponent(g);
 
         g.clearRect(0, 0, getWidth(), getHeight());
-        g.fillOval(ball.getX() - ball.getWidth()/2, ball.getY() - ball.getHeight()/2, ball.getWidth(), ball.getHeight());
+        g.fillOval((int) (ball.getX() - ball.getWidth()/2), (int) (ball.getY() - ball.getHeight()/2), ball.getWidth(), ball.getHeight());
     }
 
 
