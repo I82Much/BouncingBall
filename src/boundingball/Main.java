@@ -22,47 +22,26 @@ public class Main extends JPanel {
     private static final int MS_TO_WAIT = 1000 / FRAMES_PER_SECOND;
     private Ball ball;
     private static final int INITIAL_Y_VELOCITY = 10;
+    private static final int INITIAL_X_VELOCITY = 5;
 
     private static final double ACCELERATION = 1.1;
-
+    // What proportion of the velocity is retained on a bounce?  if 1.0, no energy
+    // is lost, and the ball will bounce infinitely.
+    private static final double COEFFICIENT_OF_RESTITUTION = 0.8;
     private Timer animationTimer;
+    private TimerTask animationTask;
 
     public Main() {
-        ball = new Ball(200, 0, 0, INITIAL_Y_VELOCITY);
+        ball = new Ball(200, 0, INITIAL_X_VELOCITY, INITIAL_Y_VELOCITY);
 
 
         animationTimer = new Timer("Ball Animation");
-        TimerTask updateBallTask = new TimerTask() {
-            @Override
-            public void run() {
+        animationTask = new AnimationUpdator();
+    }
 
-
-                // a = (v2-v1)/t
-                // a*t = (v2-v1)
-                // (a*t)+v1 = v2
-
-                double v2 = (ACCELERATION * 1) + ball.getyVelocity();
-
-
-                ball.setyVelocity(v2);
-                ball.update();
-
-
-                // If it falls off the stage, reset it to the top of the screen
-                if (ball.getY() > getHeight()) {
-                    ball.setY(getHeight());
-                    ball.setyVelocity((-.9 * ball.getyVelocity()));
-                }
-                else if (ball.getY() < 0) {
-                    ball.setY(0);
-                    ball.setyVelocity((-.9 * ball.getyVelocity()));
-                }
-
-                repaint();
-            }
-        };
+    public void start() {
         // Update at FRAMES_PER_SECOND hz
-        animationTimer.schedule(updateBallTask, 0, MS_TO_WAIT);
+        animationTimer.schedule(animationTask, 0, MS_TO_WAIT);
     }
 
     @Override
@@ -81,6 +60,45 @@ public class Main extends JPanel {
         g.fillOval((int) (ball.getX() - ball.getWidth()/2), (int) (ball.getY() - ball.getHeight()/2), ball.getWidth(), ball.getHeight());
     }
 
+    private class AnimationUpdator extends TimerTask {
+
+        @Override
+        public void run() {
+
+            // a = (v2-v1)/t
+            // a*t = (v2-v1)
+            // (a*t)+v1 = v2
+            double v2 = (ACCELERATION * 1) + ball.getyVelocity();
+
+            ball.setyVelocity(v2);
+            ball.update();
+
+            // Ball is out of bounds in y dimension
+            if (ball.getY() > getHeight()) {
+                ball.setY(getHeight());
+                ball.setyVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getyVelocity());
+            }
+            else if (ball.getY() < 0) {
+                ball.setY(0);
+                ball.setyVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getyVelocity());
+            }
+
+
+            // Ball is out of bounds in x dimension
+            if (ball.getX() > getWidth()) {
+                ball.setX(getWidth());
+                ball.setxVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getxVelocity());
+            }
+            else if (ball.getX() < 0) {
+                ball.setX(0);
+                ball.setxVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getxVelocity());
+            }
+
+
+            repaint();
+        }
+
+    }
 
 
     /**
@@ -90,13 +108,13 @@ public class Main extends JPanel {
         // TODO code application logic here
 
         JFrame frame = new JFrame();
-        JPanel panel = new Main();
+        Main panel = new Main();
         frame.getContentPane().add(panel);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+        panel.start();
     }
 
 }
