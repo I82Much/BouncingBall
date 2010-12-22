@@ -21,22 +21,32 @@ public class Main extends JPanel {
     private static final int FRAMES_PER_SECOND = 30;
     private static final int MS_TO_WAIT = 1000 / FRAMES_PER_SECOND;
     private Ball ball;
-
+    private static final int INITIAL_Y_VELOCITY = 10;
     private Timer animationTimer;
 
     public Main() {
-        ball = new Ball(200, 0, 0, 10);
+        ball = new Ball(200, 0, 0, INITIAL_Y_VELOCITY);
 
 
         animationTimer = new Timer("Ball Animation");
         TimerTask updateBallTask = new TimerTask() {
             @Override
             public void run() {
+
+                
+
+                ball.setyVelocity((int) (ball.getyVelocity() * 1.1));
                 ball.update();
+
 
                 // If it falls off the stage, reset it to the top of the screen
                 if (ball.getY() > getHeight()) {
+                    ball.setY(getHeight());
+                    ball.setyVelocity((int) (-.9 * ball.getyVelocity()));
+                }
+                else if (ball.getY() < 0) {
                     ball.setY(0);
+                    ball.setyVelocity((int) (-.9 * ball.getyVelocity()));
                 }
 
                 repaint();

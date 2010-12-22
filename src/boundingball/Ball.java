@@ -10,10 +10,10 @@ package boundingball;
  * @author ndunn
  */
 public class Ball {
-    private int x;
-    private int y;
-    private int xVelocity;
-    private int yVelocity;
+    private double x;
+    private double y;
+    private double xVelocity;
+    private double yVelocity;
 
     private int width;
     private int height;
@@ -59,35 +59,35 @@ public class Ball {
         this.width = width;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getxVelocity() {
+    public double getxVelocity() {
         return xVelocity;
     }
 
-    public void setxVelocity(int xVelocity) {
+    public void setxVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public int getyVelocity() {
+    public double getyVelocity() {
         return yVelocity;
     }
 
-    public void setyVelocity(int yVelocity) {
+    public void setyVelocity(double yVelocity) {
         this.yVelocity = yVelocity;
     }
 
