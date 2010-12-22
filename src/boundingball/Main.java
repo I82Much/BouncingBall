@@ -35,7 +35,7 @@ public class Main extends JPanel {
     private TimerTask animationTask;
 
     public Main() {
-        ball = new Ball(200, 0, INITIAL_X_VELOCITY, INITIAL_Y_VELOCITY);
+        ball = new Ball(200, 0, INITIAL_X_VELOCITY, INITIAL_Y_VELOCITY, 20, 20);
 
 
         animationTimer = new Timer("Ball Animation");
@@ -53,14 +53,15 @@ public class Main extends JPanel {
     }
 
 
-
-
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         g.clearRect(0, 0, getWidth(), getHeight());
-        g.fillOval((int) (ball.getX() - ball.getWidth()/2), (int) (ball.getY() - ball.getHeight()/2), ball.getWidth(), ball.getHeight());
+
+        int upperLeftX = (int) (ball.getX() - ball.getWidth()/2);
+        int upperLeftY = (int) (ball.getY() - ball.getHeight()/2);
+        g.fillOval(upperLeftX, upperLeftY, ball.getWidth(), ball.getHeight());
     }
 
     private class AnimationUpdator extends TimerTask {
@@ -77,6 +78,8 @@ public class Main extends JPanel {
             ball.update();
 
             int maxY = getHeight() - (ball.getHeight() / 2);
+            int maxX = getWidth() - (ball.getWidth() / 2);
+            int minX = 0 + ball.getWidth() / 2;
 
             // Ball is out of bounds in y dimension
             if (ball.getY() > maxY) {
@@ -90,20 +93,18 @@ public class Main extends JPanel {
 
 
             // Ball is out of bounds in x dimension
-            if (ball.getX() > getWidth()) {
-                ball.setX(getWidth());
+            if (ball.getX() > maxX) {
+                ball.setX(maxX);
                 ball.setxVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getxVelocity());
             }
-            else if (ball.getX() < 0) {
-                ball.setX(0);
+            else if (ball.getX() < minX) {
+                ball.setX(minX);
                 ball.setxVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getxVelocity());
             }
 
             // ball is rolling along the bottom
             if (ball.getY() == maxY) {
-                System.out.println("x velocity: " + ball.getxVelocity());
                 ball.setxVelocity(COEFFICIENT_OF_FRICTION * ball.getxVelocity());
-                System.out.println("x velocity after: " + ball.getxVelocity());
             }
 
             repaint();
