@@ -28,6 +28,9 @@ public class Main extends JPanel {
     // What proportion of the velocity is retained on a bounce?  if 1.0, no energy
     // is lost, and the ball will bounce infinitely.
     private static final double COEFFICIENT_OF_RESTITUTION = 0.8;
+    // While the ball is rolling along the bottom of the screen, its x velocity
+    // is multiplied by this amount each frame.
+    private static final double COEFFICIENT_OF_FRICTION = 0.9;
     private Timer animationTimer;
     private TimerTask animationTask;
 
@@ -73,9 +76,11 @@ public class Main extends JPanel {
             ball.setyVelocity(v2);
             ball.update();
 
+            int maxY = getHeight() - (ball.getHeight() / 2);
+
             // Ball is out of bounds in y dimension
-            if (ball.getY() > getHeight()) {
-                ball.setY(getHeight());
+            if (ball.getY() > maxY) {
+                ball.setY(maxY);
                 ball.setyVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getyVelocity());
             }
             else if (ball.getY() < 0) {
@@ -94,6 +99,12 @@ public class Main extends JPanel {
                 ball.setxVelocity(-COEFFICIENT_OF_RESTITUTION * ball.getxVelocity());
             }
 
+            // ball is rolling along the bottom
+            if (ball.getY() == maxY) {
+                System.out.println("x velocity: " + ball.getxVelocity());
+                ball.setxVelocity(COEFFICIENT_OF_FRICTION * ball.getxVelocity());
+                System.out.println("x velocity after: " + ball.getxVelocity());
+            }
 
             repaint();
         }
